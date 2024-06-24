@@ -47,8 +47,6 @@ const getTodos = async (): Promise<Todo[]> => {
 
   return new Promise((resolve, reject) => {
     request.onsuccess = (event: Event) => {
-      console.log((event.target as IDBRequest).result);
-
       resolve((event.target as IDBRequest).result);
     };
 
