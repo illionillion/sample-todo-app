@@ -1,17 +1,32 @@
-import { Button, Container, HStack, Heading, Input, List, ListItem, Text } from "@yamada-ui/react"
-import { ChangeEvent, useState } from "react"
+import { Button, Container, HStack, Heading, Input, List, ListItem, Text } from "@yamada-ui/react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { addTodo, clearTodos, getTodos } from "./utils/indexed-db";
 
 function App() {
+  const [todoName, setTodoName] = useState<string>('');
+  const [todos, setTodos] = useState<Awaited<ReturnType<typeof getTodos>>>([]);
 
-  const [todoName, setTodoName] = useState<string>('')
-  const [todos, setTodos] = useState<string[]>([])
+  const handleTodoChange = (e: ChangeEvent<HTMLInputElement>) => setTodoName(e.currentTarget.value);
 
-  const handleTodoChange = (e: ChangeEvent<HTMLInputElement>) => setTodoName(e.currentTarget.value)
-  const handleAddTodo = () => {
-    if (todoName === "") return
-    setTodos([...todos, todoName])
-    setTodoName('')
+  const handleAddTodo = async () => {
+    if (todoName === "") return;
+    await addTodo({ name: todoName });
+    setTodos([...todos, { name: todoName }]);
+    setTodoName('');
+  };
+
+  const handleClearToso = async () => {
+    await clearTodos()
+    setTodos([])
   }
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const storedTodos = await getTodos();
+      setTodos(storedTodos);
+    };
+    fetchTodos();
+  }, []);
 
   return (
     <>
@@ -30,9 +45,19 @@ function App() {
             colorScheme="primary"
             borderTopLeftRadius={0}
             borderBottomLeftRadius={0}
+            borderTopRightRadius={0}
+            borderBottomRightRadius={0}
             onClick={handleAddTodo}
           >
             Add
+          </Button>
+          <Button
+            colorScheme="danger"
+            borderTopLeftRadius={0}
+            borderBottomLeftRadius={0}
+            onClick={handleClearToso}
+          >
+            All Clear
           </Button>
         </HStack>
         {
@@ -41,7 +66,7 @@ function App() {
             :
             <List>
               {todos.map((todo, i) => (
-                <ListItem key={i}>{todo}</ListItem>
+                <ListItem key={i}>{todo.name}</ListItem>
               ))}
             </List>
         }
