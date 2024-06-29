@@ -56,6 +56,13 @@ const getTodos = async (): Promise<Todo[]> => {
   });
 };
 
+const deleteTodo = async (id: number): Promise<void> => {
+  const db = await openDB();
+  const transaction = db.transaction(STORE_NAME, "readwrite");
+  const store = transaction.objectStore(STORE_NAME);
+  store.delete(id);
+};
+
 const clearTodos = async (): Promise<void> => {
   const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
@@ -63,4 +70,4 @@ const clearTodos = async (): Promise<void> => {
   store.clear();
 };
 
-export { addTodo, getTodos, clearTodos };
+export { addTodo, getTodos, deleteTodo, clearTodos };
