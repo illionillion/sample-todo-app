@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Container,
   HStack,
   Heading,
@@ -10,7 +11,13 @@ import {
 } from "@yamada-ui/react";
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
-import { addTodo, clearTodos, deleteTodo, getTodos } from "./utils/indexed-db";
+import {
+  addTodo,
+  clearTodos,
+  deleteTodo,
+  getTodos,
+  updateTodo,
+} from "./utils/indexed-db";
 
 function App() {
   const [todoName, setTodoName] = useState<string>("");
@@ -24,6 +31,18 @@ function App() {
     await addTodo({ name: todoName, isCompleted: false });
     await fetchTodos();
     setTodoName("");
+  };
+
+  const handleToggleComplete = async (id: number) => {
+    const todo = todos.find((todo) => todo.id === id);
+    if (todo) {
+      await updateTodo(id, { isCompleted: !todo.isCompleted });
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo,
+        ),
+      );
+    }
   };
 
   const handleDeleteTodo = async (id: number) => {
@@ -82,9 +101,18 @@ function App() {
           <Text>No todo.</Text>
         ) : (
           <List>
-            {todos.map((todo, i) => (
-              <ListItem key={i} as={HStack} justifyContent="space-between">
-                <Text>{todo.name}</Text>
+            {todos.map((todo) => (
+              <ListItem
+                key={todo.id}
+                as={HStack}
+                justifyContent="space-between"
+              >
+                <Checkbox
+                  isChecked={todo.isCompleted}
+                  onChange={() => handleToggleComplete(todo.id || 0)}
+                >
+                  {todo.name}
+                </Checkbox>
                 <Button
                   variant="outline"
                   colorScheme="danger"

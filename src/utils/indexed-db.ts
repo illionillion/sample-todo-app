@@ -5,6 +5,7 @@ const DB_VERSION = 1;
 interface Todo {
   id?: number;
   name: string;
+  isCompleted: boolean;
 }
 
 const openDB = (): Promise<IDBDatabase> => {
@@ -56,6 +57,26 @@ const getTodos = async (): Promise<Todo[]> => {
   });
 };
 
+const updateTodo = async (
+  id: number,
+  updatedTodo: Partial<Todo>,
+): Promise<void> => {
+  const db = await openDB();
+  const transaction = db.transaction(STORE_NAME, "readwrite");
+  const store = transaction.objectStore(STORE_NAME);
+  const getRequest = store.get(id);
+
+  getRequest.onsuccess = (event: Event) => {
+    const todo = (event.target as IDBRequest).result;
+    const updated = { ...todo, ...updatedTodo };
+    store.put(updated);
+  };
+
+  getRequest.onerror = (event: Event) => {
+    console.error("Failed to update todo", (event.target as IDBRequest).error);
+  };
+};
+
 const deleteTodo = async (id: number): Promise<void> => {
   const db = await openDB();
   const transaction = db.transaction(STORE_NAME, "readwrite");
@@ -70,4 +91,4 @@ const clearTodos = async (): Promise<void> => {
   store.clear();
 };
 
-export { addTodo, getTodos, deleteTodo, clearTodos };
+export { addTodo, getTodos, updateTodo, deleteTodo, clearTodos };
