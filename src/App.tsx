@@ -21,7 +21,7 @@ function App() {
 
   const handleAddTodo = async () => {
     if (todoName === "") return;
-    await addTodo({ name: todoName });
+    await addTodo({ name: todoName, isCompleted: false });
     await fetchTodos();
     setTodoName("");
   };
@@ -32,7 +32,7 @@ function App() {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
-  const handleClearToso = async () => {
+  const handleClearTodo = async () => {
     await clearTodos();
     setTodos([]);
   };
@@ -73,7 +73,7 @@ function App() {
             colorScheme="danger"
             borderTopLeftRadius={0}
             borderBottomLeftRadius={0}
-            onClick={handleClearToso}
+            onClick={handleClearTodo}
           >
             All Clear
           </Button>
