@@ -27226,6 +27226,8 @@ function Tz() {
                       children: [
                         b.jsx(bf, {
                           isChecked: c.isCompleted,
+                          flexGrow: 1,
+                          h: "full",
                           onChange: () => s(c.id || 0),
                           children: c.name,
                         }),
