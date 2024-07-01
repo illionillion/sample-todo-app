@@ -109,6 +109,8 @@ function App() {
               >
                 <Checkbox
                   isChecked={todo.isCompleted}
+                  flexGrow={1}
+                  h="full"
                   onChange={() => handleToggleComplete(todo.id || 0)}
                 >
                   {todo.name}
