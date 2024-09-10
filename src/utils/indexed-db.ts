@@ -2,7 +2,7 @@ const DB_NAME = "todoDB";
 const STORE_NAME = "todos";
 const DB_VERSION = 1;
 
-interface Todo {
+export interface Todo {
   id?: number;
   name: string;
   isCompleted: boolean;
